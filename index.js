@@ -13,12 +13,27 @@ app.use(express.json());
 
 
 const uri = `mongodb+srv://${process.env.USER_NAME}:${process.env.SECRET_KEY}@cluster0.ukuxru5.mongodb.net/?retryWrites=true&w=majority`;
+
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
-client.connect(err => {
-  const collection = client.db("test").collection("devices");
-  // perform actions on the collection object
-  client.close();
-});
+
+async function run(){
+    try {
+        const serviceCollection = client.db('branderCar').collection('services');
+        
+        app.get('/services', async(req, res) => {
+            const query = {};
+            const cursor = serviceCollection.find(query);
+            const services = await cursor.toArray();
+            res.send(services);
+        })
+    }
+    finally {
+
+    }
+
+}
+run().catch(err => console.error(err))
+
 
 
 app.get('/', (req, res) => {
